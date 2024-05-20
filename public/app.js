@@ -57,15 +57,15 @@ async function extractTextFromResume(resumeFileName, resumeFilePath) {
   
     // Determine the type of the file and extract text accordingly
     switch (fileExtension) {
-      case 'pdf':
-        console.log('Extracting text from PDF...');
-        return await extractTextFromPDF(resumeFilePath); // Extract text from PDF file
-      case 'docx':
-        console.log('Extracting text from DOCX...');
-        return await extractTextFromDocx(resumeFilePath); // Extract text from DOCX file
-      default:
-        console.log('Unsupported file type:', fileExtension);
-        throw new Error('Unsupported file type.'); // Throw error for unsupported file types
+        case 'pdf':
+            console.log('Extracting text from PDF...');
+            return await extractTextFromPDF(resumeFilePath); // Extract text from PDF file
+        case 'docx':
+            console.log('Extracting text from DOCX...');
+            return await extractTextFromDocx(resumeFilePath); // Extract text from DOCX file
+        default:
+            console.log('Unsupported file type:', fileExtension);
+            throw new Error('Unsupported file type.'); // Throw error for unsupported file types
     }
   }
 
@@ -105,7 +105,43 @@ async function getSummaryFromOpenAI(resumeContent) {
     
     // Return the text of the first choice from the API response
     return choices[0].text;
-  }
+}
+
+//Extracts details (skills, summary, and description) from the given summary text.
+async function extractDetailsFromSummary(summaryText, resumeContent) {
+    // Regular expressions to extract the relevant sections from the summary text
+    const skillRegex = /Skills:([\s\S]+?)Summary:/;
+    const summaryRegex = /Summary:([\s\S]+?)Description:/;
+    const descriptionRegex = /Description:([\s\S]+)/;
+  
+    // Match the regular expressions against the summary text
+    const skillMatch = summaryText.match(skillRegex);
+    const summaryMatch = summaryText.match(summaryRegex);
+    const descriptionMatch = summaryText.match(descriptionRegex);
+  
+    // Extract and clean the matched text for skills, summary, and description
+    const skill = skillMatch ? skillMatch[1].trim().replace(/\n/g, '') : null;
+    const summary = summaryMatch ? summaryMatch[1].trim().replace(/\n/g, '') : null;
+    const description = descriptionMatch ? descriptionMatch[1].trim().replace(/\n/g, '') : null; 
+  
+    // Check if any of the extracted details are null
+    if (skill === null || summary === null || description === null) {
+        // If any detail is missing, re-summarize the resume content using OpenAI
+        const reSummarizedText = await getSummaryFromOpenAI(resumeContent);
+        // Extract details from the re-summarized text recursively
+        return extractDetailsFromSummary(reSummarizedText, resumeContent);
+    } else {
+        // Return the extracted details as an object
+        return {
+            skill,
+            summary,
+            description,
+        };
+    } 
+}
+
+
+
   
   
 
