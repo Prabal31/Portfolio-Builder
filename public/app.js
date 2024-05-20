@@ -140,6 +140,13 @@ async function extractDetailsFromSummary(summaryText, resumeContent) {
     } 
 }
 
+const PORT = 8080;
+
+// Start the server and listen on the specified port
+app.listen(PORT, () => {
+  // Log a message to the console indicating the server is running and on which port
+  console.log(`Server is running on port ${PORT}`);
+});
 
 
   
