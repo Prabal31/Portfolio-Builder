@@ -80,6 +80,31 @@ async function extractTextFromDocx(docxFilePath) {
     // Use Mammoth to extract raw text from the DOCX file
     const result = await mammoth.extractRawText({ path: docxFilePath });
     return result.value;
+}
+
+async function getSummaryFromOpenAI(resumeContent) {
+    // Extract the relevant portion of the resume content, ensuring it does not exceed 1,000,000 characters
+    const relevantInfo = resumeContent.substring(0, 1000000);
+    
+    // Define the prompt for summarization, including instructions for extracting details from the resume
+    const summarizationPrompt = `
+      You are an AI assistant tool to help to extract details from the resume as provided.
+      1. Extract Top 6 main skills.
+      2. Small summary of 60 character.
+      3. A description of max 500 Character.
+      Provide the response in the same format as above.
+      Text:
+      "${resumeContent}"
+    `;
+    
+    // Specify the deployment name for the OpenAI model
+    const deploymentName = "";  //Place your Development name here
+    
+    // Make a request to the OpenAI API to get completions based on the summarization prompt
+    const { choices } = await client.getCompletions(deploymentName, summarizationPrompt, { maxTokens: 10000 });
+    
+    // Return the text of the first choice from the API response
+    return choices[0].text;
   }
   
   
