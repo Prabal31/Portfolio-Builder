@@ -14,7 +14,7 @@ Welcome to the Portfolio Builder! This project allows users to upload their resu
 To get started with the Portfolio Builder, follow these steps:
 
 1. **Clone the repository**:
-
+    https://github.com/Prabal31/Portfolio-Builder.git
 
 2. **Install dependencies**:
     npm install
