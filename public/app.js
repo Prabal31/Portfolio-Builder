@@ -50,3 +50,23 @@ app.get('/upload', upload.single('resume'), async (req, res) => {
     }
 });
 
+async function extractTextFromResume(resumeFileName, resumeFilePath) {
+    // Extract the file extension from the resume file name
+    const fileExtension = resumeFileName.split('.').pop().toLowerCase();
+    console.log('File extension:', fileExtension);
+  
+    // Determine the type of the file and extract text accordingly
+    switch (fileExtension) {
+      case 'pdf':
+        console.log('Extracting text from PDF...');
+        return await extractTextFromPDF(resumeFilePath); // Extract text from PDF file
+      case 'docx':
+        console.log('Extracting text from DOCX...');
+        return await extractTextFromDocx(resumeFilePath); // Extract text from DOCX file
+      default:
+        console.log('Unsupported file type:', fileExtension);
+        throw new Error('Unsupported file type.'); // Throw error for unsupported file types
+    }
+  }
+  
+
