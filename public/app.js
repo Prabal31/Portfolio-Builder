@@ -68,5 +68,19 @@ async function extractTextFromResume(resumeFileName, resumeFilePath) {
         throw new Error('Unsupported file type.'); // Throw error for unsupported file types
     }
   }
+
+async function extractTextFromPDF(pdfFilePath) {
+    // Read the PDF file into a buffer
+    const dataBuffer = fs.readFileSync(pdfFilePath);
+    // Parse the PDF data buffer and extract text
+    const data = await PDFParser(dataBuffer);
+    return data.text;
+}
+async function extractTextFromDocx(docxFilePath) {
+    // Use Mammoth to extract raw text from the DOCX file
+    const result = await mammoth.extractRawText({ path: docxFilePath });
+    return result.value;
+  }
+  
   
 
